@@ -4,6 +4,7 @@ import {
   assertTrustedUrl,
   buildSourceLinkCommentHtml,
   createCommittedSnapshot,
+  normalizeEthereumSignature,
   redactAuthResult
 } from "../packages/core/src/index.mjs";
 
@@ -40,6 +41,12 @@ test("auth redaction hides token", () => {
   assert.equal(output.token, "[redacted]");
   assert.equal(output.token_present, true);
   assert.equal("token_preview" in output, false);
+});
+
+test("normalize ethereum signature converts v byte", () => {
+  const body = "a".repeat(128);
+  assert.equal(normalizeEthereumSignature(`0x${body}1b`), `0x${body}00`);
+  assert.equal(normalizeEthereumSignature(`0x${body}1c`), `0x${body}01`);
 });
 
 test("committed snapshot includes raw report section", () => {

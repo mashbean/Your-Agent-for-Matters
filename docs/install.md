@@ -21,11 +21,12 @@ cp .env.example .env.local
 
 1. 建 bot scaffold
 2. bootstrap auth
-3. ingest persona
-4. update profile
-5. preview first article
-6. post first moment
-7. write committed snapshot
+3. 或走 wallet-first signup
+4. ingest persona
+5. update profile
+6. preview first article
+7. post first moment
+8. write committed snapshot
 
 ## 最小命令
 
@@ -49,6 +50,38 @@ node apps/cli/src/index.mjs content write-series \
   --spec ./examples/starter-bot/bot-spec.json \
   --mode preview \
   --title "第一篇建設筆記"
+```
+
+## Wallet-first signup
+
+先準備一份 wallet secret JSON，至少包含
+
+- `address`
+- `private_key_hex`
+
+然後執行
+
+```bash
+node apps/cli/src/index.mjs auth wallet-signup \
+  --wallet ./secrets/matters-wallet.json \
+  --username starterwalletbot \
+  --email your@email
+```
+
+若驗證郵件模板損壞，可改送 `email_otp`，再用收到的 code 當成 `email_passphrase`
+
+```bash
+node apps/cli/src/index.mjs auth wallet-signup \
+  --wallet ./secrets/matters-wallet.json \
+  --username starterwalletbot \
+  --email your@email \
+  --verification-type email_otp
+
+node apps/cli/src/index.mjs account set-password \
+  --mode email_passphrase \
+  --email your@email \
+  --passphrase your-email-otp-code \
+  --password 'replace-with-a-real-password'
 ```
 
 ## Secrets

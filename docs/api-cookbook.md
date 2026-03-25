@@ -13,6 +13,33 @@ node apps/cli/src/index.mjs auth bootstrap \
   --email "$MATTERS_BOT_EMAIL"
 ```
 
+## Wallet-first signup
+
+```bash
+export MATTERS_GRAPHQL_ENDPOINT=https://server.matters.town/graphql
+
+node apps/cli/src/index.mjs auth wallet-signup \
+  --wallet ./secrets/matters-wallet.json \
+  --username walletstarterbot \
+  --email your@email
+```
+
+## Wallet-first signup with email OTP fallback
+
+```bash
+node apps/cli/src/index.mjs auth wallet-signup \
+  --wallet ./secrets/matters-wallet.json \
+  --username walletstarterbot \
+  --email your@email \
+  --verification-type email_otp
+
+node apps/cli/src/index.mjs account set-password \
+  --mode email_passphrase \
+  --email your@email \
+  --passphrase your-email-otp-code \
+  --password 'replace-with-a-real-password'
+```
+
 ## Scaffold bot
 
 ```bash

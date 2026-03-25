@@ -1,5 +1,6 @@
 import { callGraphql } from "./graphql.mjs";
 import { env, toBoolean, toSafeString } from "./utils.mjs";
+import { walletLoginWithWallet } from "./wallet-auth.mjs";
 
 export async function loginWithEmailPassphrase({ endpoint, email, passphrase }) {
   const data = await callGraphql({
@@ -68,13 +69,11 @@ export async function bootstrapAuth({
     if (!toBoolean(experimentalWalletFirst, false)) {
       throw new Error("wallet_first_experimental requires --experimental true");
     }
-    return {
-      mode: "wallet_first_experimental",
-      token: "",
-      experimental: true,
-      wallet_path: walletPath,
-      operator_follow_up: "此 lane 目前只定義 contract，不保證 Matters 端有穩定 create-account API。"
-    };
+    const resolvedEndpoint = endpoint || env("MATTERS_GRAPHQL_ENDPOINT", "https://server.matters.town/graphql");
+    return walletLoginWithWallet({
+      endpoint: resolvedEndpoint,
+      walletPath
+    });
   }
   throw new Error(`unsupported auth mode: ${resolvedMode}`);
 }

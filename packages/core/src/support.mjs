@@ -1,23 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { readFile } from "node:fs/promises";
 import { callGraphql } from "./graphql.mjs";
 import { toSafeString } from "./utils.mjs";
-
-export async function loadWalletSecret(walletPath) {
-  const payload = JSON.parse(await readFile(walletPath, "utf8"));
-  const address = toSafeString(payload.address);
-  const privateKeyHex = toSafeString(payload.private_key_hex);
-  if (!address || !privateKeyHex) {
-    throw new Error("wallet secret file must contain address and private_key_hex");
-  }
-  return {
-    address,
-    privateKeyHex,
-    createdAt: toSafeString(payload.created_at),
-    networkFamily: toSafeString(payload.network_family),
-    intendedNetwork: toSafeString(payload.intended_network)
-  };
-}
+import { loadWalletSecret } from "./wallet-auth.mjs";
 
 export async function fetchViewerWalletState({ endpoint, token }) {
   const data = await callGraphql({

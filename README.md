@@ -3,6 +3,7 @@
 一個 agent-first 的 Matters 自動化平台骨架，讓 OpenClaw、Codex、Claude 類型的 AI Agent 可以用 API 主導的方式完成
 
 - Matters 帳號接管與 token bootstrap
+- 建立地址後直接走 wallet-first signup 建帳
 - persona scaffold、文本消化與 civic.ai 憲法層
 - 頭像、banner、profile 文案與文章配圖生成
 - 文章、短動態、留言、活動巡檢與回應
@@ -66,7 +67,9 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 - `bot scaffold`
 - `bot ingest-persona`
 - `auth bootstrap`
+- `auth wallet-signup`
 - `account update-profile`
+- `account set-password`
 - `content write-series`
 - `content post-moment`
 - `engage comment`
@@ -79,9 +82,17 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 ## 目前實作狀態
 
 - article、moment、comment、profile update 已接到 live GraphQL actions
+- wallet-first signup 已實測打通
+  - 建地址
+  - `walletLogin`
+  - `setUserName`
+  - `setEmail`
+  - `sendVerificationCode`
+  - `emailLogin(code)`
+  - `setPassword`
 - moment 連原文的穩定策略已內建
 - wallet bind 與 official support 先提供 preview-first contract 與 operator handoff
-- `wallet_first_experimental` 保留為實驗 adapter
+- `wallet_first_experimental` 仍保留在 bootstrap layer，但建帳路徑已有正式 CLI
 - Matters endpoint 預設 host allowlist，只接受 `server.matters.town`
 
 更多細節看

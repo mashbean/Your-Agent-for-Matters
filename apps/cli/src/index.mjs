@@ -13,12 +13,14 @@ import {
   postMomentWithSourceLink,
   publishArticle,
   redactAuthResult,
+  setPassword,
   updateUserProfile,
   uploadAsset,
   loadJson,
   saveJson,
   toBoolean,
-  toSafeString
+  toSafeString,
+  walletSignupWithWallet
 } from "../../../packages/core/src/index.mjs";
 import {
   buildRuntimePromptContext,
@@ -32,6 +34,10 @@ import {
 } from "../../../packages/runtime/src/index.mjs";
 import { createOpenAIProvider } from "../../../packages/providers-openai/src/index.mjs";
 
+function resolveEndpoint(flags) {
+  return flags.endpoint || process.env.MATTERS_GRAPHQL_ENDPOINT || "https://server.matters.town/graphql";
+}
+
 function printUsage() {
   console.log(`Matters Autonomous Agent Platform
 
@@ -39,7 +45,9 @@ Commands
   bot scaffold
   bot ingest-persona
   auth bootstrap
+  auth wallet-signup
   account update-profile
+  account set-password
   content write-series
   content post-moment
   engage comment
@@ -108,7 +116,7 @@ async function runAuthBootstrap(flags) {
   applySecurityFlags(flags);
   const result = await bootstrapAuth({
     mode: flags.mode,
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     email: flags.email,
     passphrase: flags.passphrase,
     existingToken: flags.token,
@@ -118,17 +126,34 @@ async function runAuthBootstrap(flags) {
   console.log(JSON.stringify(redactAuthResult(result), null, 2));
 }
 
+async function runWalletSignup(flags) {
+  applySecurityFlags(flags);
+  const result = await walletSignupWithWallet({
+    endpoint: resolveEndpoint(flags),
+    walletPath: path.resolve(flags.wallet),
+    userName: flags.username || "",
+    email: flags.email || "",
+    sendVerification: toBoolean(flags["send-verification"], Boolean(flags.email)),
+    verificationType: flags["verification-type"] || "email_verify",
+    redirectUrl: flags["redirect-url"] || "",
+    language: flags.language || "",
+    pythonPath: flags.python || "",
+    pythonDepsPath: flags["python-deps-path"] || ""
+  });
+  console.log(JSON.stringify(redactAuthResult(result), null, 2));
+}
+
 async function runUpdateProfile(flags) {
   applySecurityFlags(flags);
   const auth = await bootstrapAuth({
     mode: flags.mode || "existing_token",
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     email: flags.email,
     passphrase: flags.passphrase,
     existingToken: flags.token
   });
   const avatar = await uploadAsset({
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     token: auth.token,
     filePath: path.resolve(flags.avatar),
     assetType: "avatar",
@@ -137,7 +162,7 @@ async function runUpdateProfile(flags) {
     allowUnsafeEndpoint: toBoolean(flags["allow-unsafe-endpoint"], false)
   });
   const banner = await uploadAsset({
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     token: auth.token,
     filePath: path.resolve(flags.banner),
     assetType: "profileCover",
@@ -146,7 +171,7 @@ async function runUpdateProfile(flags) {
     allowUnsafeEndpoint: toBoolean(flags["allow-unsafe-endpoint"], false)
   });
   const result = await updateUserProfile({
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     token: auth.token,
     displayName: flags["display-name"],
     description: flags.bio,
@@ -156,17 +181,34 @@ async function runUpdateProfile(flags) {
   console.log(JSON.stringify({ avatar, banner, result }, null, 2));
 }
 
+async function runSetPassword(flags) {
+  applySecurityFlags(flags);
+  const auth = await bootstrapAuth({
+    mode: flags.mode || "existing_token",
+    endpoint: resolveEndpoint(flags),
+    email: flags.email,
+    passphrase: flags.passphrase,
+    existingToken: flags.token
+  });
+  const result = await setPassword({
+    endpoint: resolveEndpoint(flags),
+    token: auth.token,
+    password: flags.password
+  });
+  console.log(JSON.stringify({ result }, null, 2));
+}
+
 async function runPostMoment(flags) {
   applySecurityFlags(flags);
   const auth = await bootstrapAuth({
     mode: flags.mode || "existing_token",
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     email: flags.email,
     passphrase: flags.passphrase,
     existingToken: flags.token
   });
   const result = await postMomentWithSourceLink({
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     token: auth.token,
     content: flags.content,
     tags: toSafeString(flags.tags).split(",").map((item) => item.trim()).filter(Boolean),
@@ -264,13 +306,13 @@ async function runWriteSeries(flags) {
 
   const auth = await bootstrapAuth({
     mode: flags["auth-mode"] || "existing_token",
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     email: flags.email,
     passphrase: flags.passphrase,
     existingToken: flags.token
   });
   const draft = await putDraft({
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     token: auth.token,
     draftId: flags["draft-id"] || "",
     title: article.title,
@@ -283,7 +325,7 @@ async function runWriteSeries(flags) {
     return;
   }
   const published = await publishArticle({
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     token: auth.token,
     draftId: draft.id
   });
@@ -294,13 +336,13 @@ async function runComment(flags) {
   applySecurityFlags(flags);
   const auth = await bootstrapAuth({
     mode: flags.mode || "existing_token",
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     email: flags.email,
     passphrase: flags.passphrase,
     existingToken: flags.token
   });
   const result = await putComment({
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     token: auth.token,
     articleId: flags["article-id"],
     content: flags.content
@@ -334,13 +376,13 @@ async function runBindWallet(flags) {
   applySecurityFlags(flags);
   const auth = await bootstrapAuth({
     mode: flags.mode || "existing_token",
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     email: flags.email,
     passphrase: flags.passphrase,
     existingToken: flags.token
   });
   const result = await createBindWalletPreview({
-    endpoint: flags.endpoint,
+    endpoint: resolveEndpoint(flags),
     token: auth.token,
     walletPath: path.resolve(flags.wallet)
   });
@@ -369,7 +411,9 @@ async function main() {
   if (group === "bot" && command === "scaffold") return runBotScaffold(flags);
   if (group === "bot" && command === "ingest-persona") return runBotIngest(flags);
   if (group === "auth" && command === "bootstrap") return runAuthBootstrap(flags);
+  if (group === "auth" && command === "wallet-signup") return runWalletSignup(flags);
   if (group === "account" && command === "update-profile") return runUpdateProfile(flags);
+  if (group === "account" && command === "set-password") return runSetPassword(flags);
   if (group === "content" && command === "write-series") return runWriteSeries(flags);
   if (group === "content" && command === "post-moment") return runPostMoment(flags);
   if (group === "engage" && command === "comment") return runComment(flags);

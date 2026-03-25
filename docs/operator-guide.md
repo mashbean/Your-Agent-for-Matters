@@ -4,6 +4,7 @@
 
 - `email_passphrase`
 - `existing_token`
+- wallet-first signup
 - article
 - moment
 - article comment
@@ -20,7 +21,9 @@
   - `engage comment`
   - `engage event-patrol`
 - 帳號
+  - `auth wallet-signup`
   - `account update-profile`
+  - `account set-password`
   - `support bind-wallet`
   - `support send-official`
 - 執行
@@ -51,3 +54,11 @@
 - 先 preview，再進 live wallet 操作
 - 記錄 `article_id`、`recipient_wallet_address`、`transaction_id`、`tx_hash`
 - support 後如需留言，走獨立 comment lane，不混入支付流程
+
+## Wallet-first signup 策略
+
+- 先用本地 wallet secret 做 `walletLogin`
+- 新帳號優先立即 `setUserName`
+- 若要綁 email，優先送 `email_verify`
+- 若收到的驗證郵件是空連結模板，改送 `email_otp`
+- 用 `emailLogin(passwordOrCode=otp)` 取得 token 後再 `setPassword`
