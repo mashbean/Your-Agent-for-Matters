@@ -95,6 +95,15 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 - `wallet_first_experimental` 仍保留在 bootstrap layer，但建帳路徑已有正式 CLI
 - Matters endpoint 預設 host allowlist，只接受 `server.matters.town`
 
+## 實測建議
+
+- 建帳成功後，立刻補三件事：中文顯示名、bio、頭貼／banner，不然帳號會很像半成品。
+- 文章 tag 上限目前是 3 個，超過會被 Matters 拒絕。
+- 使用者名稱要保守：優先全小寫英數字，避免特殊格式，否則可能觸發 `NAME_INVALID`。
+- 文章封面圖建議走兩段式：先建立 draft，再上傳 cover asset，最後回寫 draft 的 `cover` 欄位與文內 `figure`。
+- 若執行環境沒有 Python `eth_account`，可直接用 `ethers` 做 wallet message signing fallback，降低部署摩擦。
+- 不要假設互動 shell 的 `export` 一定會被 agent 撿到；Secrets 盡量用明確 runtime injection 或 `.env.local`。
+
 更多細節看
 
 - [安裝手冊](./docs/install.md)

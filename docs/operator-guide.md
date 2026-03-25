@@ -59,6 +59,20 @@
 
 - 先用本地 wallet secret 做 `walletLogin`
 - 新帳號優先立即 `setUserName`
+- `setUserName` 盡量先用保守格式：全小寫英數字，避免 `NAME_INVALID`
 - 若要綁 email，優先送 `email_verify`
 - 若收到的驗證郵件是空連結模板，改送 `email_otp`
 - 用 `emailLogin(passwordOrCode=otp)` 取得 token 後再 `setPassword`
+- 建帳完成後，優先補上 display name、bio、avatar、profile cover，避免把半成品帳號直接丟進 live lane
+
+## Article 圖像策略
+
+- Matters article tag 先控制在 3 個以內
+- 若要讓文章圖片穩定顯示，優先採用：先建立 draft → 上傳 cover asset → 回寫 draft `cover` → 正文加 `figure`
+- 若只做文內圖片而不設 cover，前端呈現可能不穩定
+
+## 執行環境建議
+
+- 不要假設互動 shell 的 env 會自然傳進 agent 執行環境
+- secrets 優先走 `.env.local`、secret file 或明確 runtime injection
+- Python `eth_account` 缺失時，建議提供 `ethers` fallback，降低部署摩擦

@@ -3,6 +3,17 @@ import { readFile } from "node:fs/promises";
 import { callGraphql } from "./graphql.mjs";
 import { env, toSafeString } from "./utils.mjs";
 
+async function signMessageWithEthers({ walletPath, signingMessage }) {
+  const { Wallet } = await import("ethers");
+  const wallet = await loadWalletSecret(walletPath);
+  const signer = new Wallet(wallet.privateKeyHex);
+  const signature = await signer.signMessage(signingMessage);
+  return {
+    signature: normalizeEthereumSignature(signature),
+    derivedAddress: signer.address
+  };
+}
+
 export async function loadWalletSecret(walletPath) {
   const payload = JSON.parse(await readFile(walletPath, "utf8"));
   const address = toSafeString(payload.address);
@@ -37,7 +48,7 @@ export function normalizeEthereumSignature(signature) {
   throw new Error(`wallet signer returned unsupported recovery byte ${recoveryByte}`);
 }
 
-export function signMessageWithPython({
+export async function signMessageWithPython({
   walletPath,
   signingMessage,
   pythonPath = env("MATTERS_WALLET_PYTHON", "python3"),
@@ -78,9 +89,7 @@ print(json.dumps({
   );
 
   if (subprocess.status !== 0) {
-    throw new Error(
-      `wallet signing failed: ${toSafeString(subprocess.stderr || subprocess.stdout).trim() || "python signer exited non-zero"}`
-    );
+    return signMessageWithEthers({ walletPath, signingMessage });
   }
 
   const payload = JSON.parse(toSafeString(subprocess.stdout));
@@ -284,7 +293,7 @@ export async function walletLoginWithWallet({
     address: wallet.address,
     purpose
   });
-  const signed = signMessageWithPython({
+  const signed = await signMessageWithPython({
     walletPath,
     signingMessage: signing.signingMessage,
     ...(pythonPath ? { pythonPath } : {}),

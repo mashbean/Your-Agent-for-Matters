@@ -8,6 +8,6 @@ coverage/
 dist/
 build/
 .cache/
-runtime/
+/runtime/
 tmp/
 *.log
