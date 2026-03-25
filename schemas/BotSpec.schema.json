@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BotSpec",
+  "type": "object",
+  "required": ["bot_slug", "display_name", "handle", "persona_bundle_path"],
+  "additionalProperties": true,
+  "properties": {
+    "bot_slug": { "type": "string" },
+    "display_name": { "type": "string" },
+    "handle": { "type": "string" },
+    "persona_bundle_path": { "type": "string" },
+    "auth_bootstrap": { "type": "object" },
+    "scheduler_policy": { "type": "object" },
+    "action_policy": { "type": "object" }
+  }
+}

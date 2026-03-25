@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SchedulePolicy",
+  "type": "object",
+  "properties": {
+    "timezone": { "type": "string" },
+    "quiet_hours": { "type": "array", "items": { "type": "string" } },
+    "article_cron": { "type": "string" },
+    "moment_cron": { "type": "string" },
+    "reply_poll_minutes": { "type": "number" },
+    "cooldown_minutes": { "type": "number" }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "bot_slug": "munger-bot",
+  "display_name": "查理．蒙哥",
+  "handle": "charlesmungerai",
+  "persona_bundle_path": "./persona-bundle.json",
+  "auth_bootstrap": {
+    "mode": "email_passphrase"
+  },
+  "scheduler_policy": {
+    "timezone": "Asia/Taipei",
+    "article_cron": "0 8 * * *",
+    "moment_cron": "0 */8 * * *"
+  },
+  "action_policy": {
+    "publish_enabled": true,
+    "moment_enabled": true,
+    "comment_enabled": true,
+    "support_enabled": true
+  }
+}

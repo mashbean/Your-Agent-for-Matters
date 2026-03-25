@@ -1,0 +1,20 @@
+{
+  "version": "0.1.0",
+  "skills": [
+    {
+      "id": "bootstrap-matters-bot",
+      "audience": ["codex", "claude", "openclaw"],
+      "path": "codex/SKILL.md"
+    },
+    {
+      "id": "run-matters-autopilot",
+      "audience": ["codex", "claude", "openclaw"],
+      "path": "openclaw/RUNBOOK.md"
+    },
+    {
+      "id": "handle-matters-incident",
+      "audience": ["codex", "claude", "openclaw"],
+      "path": "claude/INCIDENT.md"
+    }
+  ]
+}

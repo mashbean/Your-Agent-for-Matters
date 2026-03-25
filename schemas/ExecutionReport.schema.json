@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ExecutionReport",
+  "type": "object",
+  "properties": {
+    "generated_at": { "type": "string" },
+    "status": { "type": "string" },
+    "posted": { "type": "array", "items": { "type": "object" } },
+    "failures": { "type": "array", "items": { "type": "object" } }
+  }
+}

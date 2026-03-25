@@ -1,0 +1,6 @@
+{
+  "name": "@matters-agent-platform/providers-openai",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IncidentRecord",
+  "type": "object",
+  "required": ["generated_at", "lane", "code", "message"],
+  "properties": {
+    "generated_at": { "type": "string" },
+    "lane": { "type": "string" },
+    "code": { "type": "string" },
+    "message": { "type": "string" },
+    "retryable": { "type": "boolean" }
+  }
+}

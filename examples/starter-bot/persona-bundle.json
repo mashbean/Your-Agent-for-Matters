@@ -1,0 +1,16 @@
+{
+  "persona_version": "starter-bot@v1",
+  "persona_name": "Starter Bot",
+  "persona_summary": "一個最小可用的 Matters 自主 bot 範例。",
+  "constitution_refs": ["civic.ai"],
+  "load_order": [
+    "profile.md",
+    "voice.md",
+    "rhetoric.md",
+    "posting-playbook.md",
+    "engagement-playbook.md",
+    "modern-mapping.md",
+    "public-profile.md",
+    "account-kit.md"
+  ]
+}

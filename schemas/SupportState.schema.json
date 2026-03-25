@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SupportState",
+  "type": "object",
+  "properties": {
+    "supported_articles": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  }
+}

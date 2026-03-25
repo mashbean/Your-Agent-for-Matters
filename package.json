@@ -1,0 +1,19 @@
+{
+  "name": "matters-autonomous-agent-platform",
+  "private": false,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Agent-first automation platform for Matters accounts, persona ops, content, engagement, and support flows.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "cli": "node apps/cli/src/index.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "find . -name '*.mjs' -print0 | xargs -0 -n1 node --check"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

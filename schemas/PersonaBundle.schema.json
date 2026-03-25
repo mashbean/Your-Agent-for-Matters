@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PersonaBundle",
+  "type": "object",
+  "required": ["persona_version", "persona_name", "persona_summary", "load_order"],
+  "properties": {
+    "persona_version": { "type": "string" },
+    "persona_name": { "type": "string" },
+    "persona_summary": { "type": "string" },
+    "constitution_refs": { "type": "array", "items": { "type": "string" } },
+    "load_order": { "type": "array", "items": { "type": "string" } }
+  }
+}
