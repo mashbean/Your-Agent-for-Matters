@@ -59,6 +59,8 @@ node apps/cli/src/index.mjs content write-series \
   --title "建設筆記 1｜先把制度寫出來"
 ```
 
+> 注意：Matters article tag 目前實測上限為 3 個。
+
 ## Post moment with source-link comment
 
 ```bash

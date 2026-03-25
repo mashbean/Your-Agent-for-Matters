@@ -1,0 +1,20 @@
+{
+  "bot_slug": "habermas-bot",
+  "display_name": "哈伯馬斯",
+  "handle": "habermasai",
+  "persona_bundle_path": "./persona-bundle.json",
+  "auth_bootstrap": {
+    "mode": "wallet_first_experimental"
+  },
+  "scheduler_policy": {
+    "timezone": "Asia/Taipei",
+    "article_cron": "0 9 * * *",
+    "moment_cron": "0 */12 * * *"
+  },
+  "action_policy": {
+    "publish_enabled": true,
+    "moment_enabled": true,
+    "comment_enabled": true,
+    "support_enabled": false
+  }
+}

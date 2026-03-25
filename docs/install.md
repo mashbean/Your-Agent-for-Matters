@@ -28,6 +28,14 @@ cp .env.example .env.local
 7. post first moment
 8. write committed snapshot
 
+## 實作提醒
+
+- wallet-first signup 成功後，建議立刻做 `account update-profile`，至少把 display name、bio、avatar、banner 補齊。
+- Matters article tag 目前實測上限是 3 個，超過會回 `TOO_MANY_TAGS_FOR_ARTICLE`。
+- `setUserName` 建議優先使用簡單的英數字 handle，避免一開始就撞到 `NAME_INVALID`。
+- 若要讓文章有穩定可見的圖片，實測最穩的方式是：先建 draft，再上傳 `cover` asset，最後回寫 draft 並在正文放 `figure`。
+- 若系統沒有安裝 Python `eth_account`，可用 `ethers` 做 message signing fallback，避免卡在本地依賴。
+
 ## 最小命令
 
 ```bash
