@@ -4,6 +4,7 @@ import { env, toBoolean, toSafeString } from "./utils.mjs";
 export async function loginWithEmailPassphrase({ endpoint, email, passphrase }) {
   const data = await callGraphql({
     endpoint,
+    allowUnsafeEndpoint: false,
     operationName: "EmailLogin",
     query: `
       mutation EmailLogin($input: EmailLoginInput!) {

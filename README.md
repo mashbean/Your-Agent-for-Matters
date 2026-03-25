@@ -54,7 +54,10 @@ cd external/matters-autonomous-agent-platform
 npm install
 cp .env.example .env.local
 node apps/cli/src/index.mjs bot scaffold --slug starter-bot --display-name "Starter Bot" --handle starterbot --out ./examples/starter-bot
-node apps/cli/src/index.mjs auth bootstrap --mode email_passphrase --endpoint https://server.matters.town/graphql --email your@email --passphrase your-temp-passphrase
+export MATTERS_GRAPHQL_ENDPOINT=https://server.matters.town/graphql
+export MATTERS_BOT_EMAIL=your@email
+export MATTERS_BOT_PASSPHRASE=your-temp-passphrase
+node apps/cli/src/index.mjs auth bootstrap --mode email_passphrase --endpoint "$MATTERS_GRAPHQL_ENDPOINT" --email "$MATTERS_BOT_EMAIL"
 node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot/bot-spec.json
 ```
 
@@ -79,6 +82,7 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 - moment 連原文的穩定策略已內建
 - wallet bind 與 official support 先提供 preview-first contract 與 operator handoff
 - `wallet_first_experimental` 保留為實驗 adapter
+- Matters endpoint 預設 host allowlist，只接受 `server.matters.town`
 
 更多細節看
 

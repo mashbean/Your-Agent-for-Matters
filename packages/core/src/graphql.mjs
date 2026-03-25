@@ -1,4 +1,4 @@
-import { toSafeString } from "./utils.mjs";
+import { assertTrustedUrl, env, parseHostList, toBoolean, toSafeString } from "./utils.mjs";
 
 export function buildGraphqlHeaders({ token = "", operationName = "" } = {}) {
   const headers = {
@@ -12,8 +12,35 @@ export function buildGraphqlHeaders({ token = "", operationName = "" } = {}) {
   return headers;
 }
 
-export async function callGraphql({ endpoint, query, variables = {}, token = "", operationName = "MattersOperation" }) {
-  const response = await fetch(endpoint, {
+function summarizeGraphqlErrors(errors) {
+  return errors
+    .map((item) => {
+      const message = toSafeString(item?.message);
+      const code = toSafeString(item?.extensions?.code);
+      return code ? `${code} ${message}`.trim() : message;
+    })
+    .filter(Boolean)
+    .join(" | ");
+}
+
+function resolveTrustedMattersEndpoint(endpoint, allowUnsafeEndpoint = false) {
+  return assertTrustedUrl(endpoint, {
+    label: "Matters endpoint",
+    allowedHosts: parseHostList(env("MATTERS_ALLOWED_HOSTS", ""), ["server.matters.town"]),
+    allowUnsafe: allowUnsafeEndpoint || toBoolean(env("MATTERS_ALLOW_UNSAFE_ENDPOINT", ""), false)
+  });
+}
+
+export async function callGraphql({
+  endpoint,
+  query,
+  variables = {},
+  token = "",
+  operationName = "MattersOperation",
+  allowUnsafeEndpoint = false
+}) {
+  const safeEndpoint = resolveTrustedMattersEndpoint(endpoint, allowUnsafeEndpoint);
+  const response = await fetch(safeEndpoint, {
     method: "POST",
     headers: buildGraphqlHeaders({ token, operationName }),
     body: JSON.stringify({ query, variables })
@@ -25,7 +52,7 @@ export async function callGraphql({ endpoint, query, variables = {}, token = "",
 
   const payload = await response.json();
   if (Array.isArray(payload.errors) && payload.errors.length > 0) {
-    throw new Error(`graphql returned errors: ${JSON.stringify(payload.errors)}`);
+    throw new Error(`graphql returned errors: ${summarizeGraphqlErrors(payload.errors)}`);
   }
 
   return payload.data || {};

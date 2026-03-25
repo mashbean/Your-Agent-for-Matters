@@ -12,6 +12,7 @@ import {
   putDraft,
   postMomentWithSourceLink,
   publishArticle,
+  redactAuthResult,
   updateUserProfile,
   uploadAsset,
   loadJson,
@@ -68,6 +69,12 @@ function parseArgs(argv) {
   return { group, command, flags };
 }
 
+function applySecurityFlags(flags) {
+  if (toBoolean(flags["allow-unsafe-endpoint"], false)) {
+    process.env.MATTERS_ALLOW_UNSAFE_ENDPOINT = "true";
+  }
+}
+
 async function runBotScaffold(flags) {
   const outputDir = path.resolve(flags.out || ".");
   const result = await scaffoldBot({
@@ -98,6 +105,7 @@ async function runBotIngest(flags) {
 }
 
 async function runAuthBootstrap(flags) {
+  applySecurityFlags(flags);
   const result = await bootstrapAuth({
     mode: flags.mode,
     endpoint: flags.endpoint,
@@ -107,10 +115,11 @@ async function runAuthBootstrap(flags) {
     experimentalWalletFirst: toBoolean(flags.experimental, false),
     walletPath: flags.wallet
   });
-  console.log(JSON.stringify(result, null, 2));
+  console.log(JSON.stringify(redactAuthResult(result), null, 2));
 }
 
 async function runUpdateProfile(flags) {
+  applySecurityFlags(flags);
   const auth = await bootstrapAuth({
     mode: flags.mode || "existing_token",
     endpoint: flags.endpoint,
@@ -124,7 +133,8 @@ async function runUpdateProfile(flags) {
     filePath: path.resolve(flags.avatar),
     assetType: "avatar",
     entityType: "user",
-    entityId: flags["viewer-id"]
+    entityId: flags["viewer-id"],
+    allowUnsafeEndpoint: toBoolean(flags["allow-unsafe-endpoint"], false)
   });
   const banner = await uploadAsset({
     endpoint: flags.endpoint,
@@ -132,7 +142,8 @@ async function runUpdateProfile(flags) {
     filePath: path.resolve(flags.banner),
     assetType: "profileCover",
     entityType: "user",
-    entityId: flags["viewer-id"]
+    entityId: flags["viewer-id"],
+    allowUnsafeEndpoint: toBoolean(flags["allow-unsafe-endpoint"], false)
   });
   const result = await updateUserProfile({
     endpoint: flags.endpoint,
@@ -146,6 +157,7 @@ async function runUpdateProfile(flags) {
 }
 
 async function runPostMoment(flags) {
+  applySecurityFlags(flags);
   const auth = await bootstrapAuth({
     mode: flags.mode || "existing_token",
     endpoint: flags.endpoint,
@@ -167,6 +179,7 @@ async function runPostMoment(flags) {
 }
 
 async function runAutonomous(flags) {
+  applySecurityFlags(flags);
   const specPath = path.resolve(flags.spec);
   const botSpec = await loadJson(specPath);
   const runtimeState = flags.state
@@ -212,6 +225,7 @@ function buildSeriesPrompt({ promptContext, botSpec, titleHint, angleHint }) {
 }
 
 async function runWriteSeries(flags) {
+  applySecurityFlags(flags);
   const specPath = path.resolve(flags.spec);
   const botSpec = await loadJson(specPath);
   const bundlePath = path.resolve(path.dirname(specPath), botSpec.persona_bundle_path);
@@ -277,6 +291,7 @@ async function runWriteSeries(flags) {
 }
 
 async function runComment(flags) {
+  applySecurityFlags(flags);
   const auth = await bootstrapAuth({
     mode: flags.mode || "existing_token",
     endpoint: flags.endpoint,
@@ -316,6 +331,7 @@ async function runEventPatrol(flags) {
 }
 
 async function runBindWallet(flags) {
+  applySecurityFlags(flags);
   const auth = await bootstrapAuth({
     mode: flags.mode || "existing_token",
     endpoint: flags.endpoint,

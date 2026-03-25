@@ -1,5 +1,5 @@
 import { callGraphql, createRateLimitAwareExecutor } from "./graphql.mjs";
-import { stripHtml } from "./utils.mjs";
+import { escapeHtml, sanitizeHttpUrl, stripHtml } from "./utils.mjs";
 
 export async function putComment({ endpoint, token, articleId, content }) {
   const data = await callGraphql({
@@ -194,7 +194,9 @@ export async function publishArticle({ endpoint, token, draftId }) {
 }
 
 export function buildSourceLinkCommentHtml({ articleTitle, articleUrl }) {
-  return `<p><a target="_blank" rel="noopener noreferrer nofollow" href="${articleUrl}">${articleTitle}</a>&nbsp;</p>`;
+  const safeTitle = escapeHtml(articleTitle);
+  const safeUrl = escapeHtml(sanitizeHttpUrl(articleUrl));
+  return `<p><a target="_blank" rel="noopener noreferrer nofollow" href="${safeUrl}">${safeTitle}</a>&nbsp;</p>`;
 }
 
 export async function postMomentWithSourceLink({

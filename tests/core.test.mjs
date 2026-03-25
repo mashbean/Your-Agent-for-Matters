@@ -1,6 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildSourceLinkCommentHtml, createCommittedSnapshot } from "../packages/core/src/index.mjs";
+import {
+  assertTrustedUrl,
+  buildSourceLinkCommentHtml,
+  createCommittedSnapshot,
+  redactAuthResult
+} from "../packages/core/src/index.mjs";
 
 test("source link comment html renders anchor", () => {
   const html = buildSourceLinkCommentHtml({
@@ -9,6 +14,32 @@ test("source link comment html renders anchor", () => {
   });
   assert.match(html, /href="https:\/\/matters.town\/a\/example"/);
   assert.match(html, /測試文章/);
+});
+
+test("source link comment html escapes title", () => {
+  const html = buildSourceLinkCommentHtml({
+    articleTitle: "\" onclick=\"alert(1)",
+    articleUrl: "https://matters.town/a/example"
+  });
+  assert.match(html, /href="https:\/\/matters.town\/a\/example"/);
+  assert.match(html, /&quot; onclick=&quot;alert\(1\)/);
+});
+
+test("trusted url blocks unallowlisted host", () => {
+  assert.throws(
+    () => assertTrustedUrl("https://evil.example/graphql", {
+      label: "Matters endpoint",
+      allowedHosts: ["server.matters.town"]
+    }),
+    /not allowlisted/
+  );
+});
+
+test("auth redaction hides token", () => {
+  const output = redactAuthResult({ mode: "existing_token", token: "abcdefgh12345678" });
+  assert.equal(output.token, "[redacted]");
+  assert.equal(output.token_present, true);
+  assert.equal("token_preview" in output, false);
 });
 
 test("committed snapshot includes raw report section", () => {

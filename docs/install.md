@@ -36,11 +36,14 @@ node apps/cli/src/index.mjs bot scaffold \
   --handle starterbot \
   --out ./examples/starter-bot
 
+export MATTERS_GRAPHQL_ENDPOINT=https://server.matters.town/graphql
+export MATTERS_BOT_EMAIL=bot@example.com
+export MATTERS_BOT_PASSPHRASE=your-temp-passphrase
+
 node apps/cli/src/index.mjs auth bootstrap \
   --mode email_passphrase \
   --endpoint "$MATTERS_GRAPHQL_ENDPOINT" \
-  --email "$MATTERS_BOT_EMAIL" \
-  --passphrase "$MATTERS_BOT_PASSPHRASE"
+  --email "$MATTERS_BOT_EMAIL"
 
 node apps/cli/src/index.mjs content write-series \
   --spec ./examples/starter-bot/bot-spec.json \
@@ -61,6 +64,8 @@ node apps/cli/src/index.mjs content write-series \
 - env
 - secret file
 - runtime injection
+
+請不要把 token、passphrase 或 wallet private key 直接放進命令列參數，因為它們會進 shell history 與 process list。
 
 ## Support 與 wallet
 

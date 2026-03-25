@@ -1,5 +1,6 @@
 import path from "node:path";
 import { readFile } from "node:fs/promises";
+import { assertTrustedUrl, env, parseHostList, toBoolean, toSafeString } from "./utils.mjs";
 
 function inferMimeType(filePath) {
   const ext = path.extname(filePath).toLowerCase();
@@ -16,8 +17,14 @@ export async function uploadAsset({
   filePath,
   assetType,
   entityType,
-  entityId
+  entityId,
+  allowUnsafeEndpoint = false
 }) {
+  const safeEndpoint = assertTrustedUrl(endpoint, {
+    label: "Matters endpoint",
+    allowedHosts: parseHostList(env("MATTERS_ALLOWED_HOSTS", ""), ["server.matters.town"]),
+    allowUnsafe: allowUnsafeEndpoint || toBoolean(env("MATTERS_ALLOW_UNSAFE_ENDPOINT", ""), false)
+  });
   const fileBuffer = await readFile(filePath);
   const fileName = path.basename(filePath);
   const mimeType = inferMimeType(filePath);
@@ -47,7 +54,7 @@ export async function uploadAsset({
   form.set("map", JSON.stringify({ "0": ["variables.input.file"] }));
   form.set("0", new Blob([fileBuffer], { type: mimeType }), fileName);
 
-  const response = await fetch(endpoint, {
+  const response = await fetch(safeEndpoint, {
     method: "POST",
     headers: {
       "x-access-token": token,
@@ -58,12 +65,14 @@ export async function uploadAsset({
     body: form
   });
   if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`singleFileUpload failed: ${response.status} ${response.statusText} ${body}`);
+    const body = toSafeString(await response.text()).replace(/\s+/g, " ").trim().slice(0, 240);
+    throw new Error(`singleFileUpload failed: ${response.status} ${response.statusText}${body ? ` ${body}` : ""}`);
   }
   const payload = await response.json();
   if (Array.isArray(payload.errors) && payload.errors.length > 0) {
-    throw new Error(`singleFileUpload returned errors: ${JSON.stringify(payload.errors)}`);
+    throw new Error(
+      `singleFileUpload returned errors: ${payload.errors.map((item) => toSafeString(item?.message)).filter(Boolean).join(" | ")}`
+    );
   }
   return payload.data.singleFileUpload;
 }

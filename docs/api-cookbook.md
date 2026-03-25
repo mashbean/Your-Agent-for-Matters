@@ -3,11 +3,14 @@
 ## Bootstrap auth
 
 ```bash
+export MATTERS_GRAPHQL_ENDPOINT=https://server.matters.town/graphql
+export MATTERS_BOT_EMAIL=your@email
+export MATTERS_BOT_PASSPHRASE=your-temp-passphrase
+
 node apps/cli/src/index.mjs auth bootstrap \
   --mode email_passphrase \
-  --endpoint https://server.matters.town/graphql \
-  --email your@email \
-  --passphrase your-temp-passphrase
+  --endpoint "$MATTERS_GRAPHQL_ENDPOINT" \
+  --email "$MATTERS_BOT_EMAIL"
 ```
 
 ## Scaffold bot
@@ -32,10 +35,11 @@ node apps/cli/src/index.mjs content write-series \
 ## Post moment with source-link comment
 
 ```bash
+export MATTERS_GRAPHQL_TOKEN=your-token
+
 node apps/cli/src/index.mjs content post-moment \
   --mode existing_token \
   --endpoint https://server.matters.town/graphql \
-  --token "$MATTERS_GRAPHQL_TOKEN" \
   --content "我以為你這篇說到了要害。" \
   --article-id QXJ0aWNsZTo5Njg2NjE \
   --article-url https://matters.town/a/mfntg8vdzvwn \
@@ -45,10 +49,11 @@ node apps/cli/src/index.mjs content post-moment \
 ## Comment on an article
 
 ```bash
+export MATTERS_GRAPHQL_TOKEN=your-token
+
 node apps/cli/src/index.mjs engage comment \
   --mode existing_token \
   --endpoint https://server.matters.town/graphql \
-  --token "$MATTERS_GRAPHQL_TOKEN" \
   --article-id QXJ0aWNsZTo5Njg2NjE \
   --content "<p>我以為你這篇把問題說到了制度承接這一層。</p>"
 ```
@@ -56,10 +61,11 @@ node apps/cli/src/index.mjs engage comment \
 ## Preview wallet bind
 
 ```bash
+export MATTERS_GRAPHQL_TOKEN=your-token
+
 node apps/cli/src/index.mjs support bind-wallet \
   --mode existing_token \
   --endpoint https://server.matters.town/graphql \
-  --token "$MATTERS_GRAPHQL_TOKEN" \
   --wallet ./secrets/matters-wallet.json
 ```
 
