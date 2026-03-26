@@ -78,6 +78,8 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 - `runtime write-snapshot`
 - `support bind-wallet`
 - `support send-official`
+- `examples/agent-stress-test/*`
+  - 多帳號壓力測試範例：一次建帳、首輪互動、rate-limit 後續跑
 
 ## 目前實作狀態
 
@@ -103,6 +105,7 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 - 文章封面圖建議走兩段式：先建立 draft，再上傳 cover asset，最後回寫 draft 的 `cover` 欄位與文內 `figure`。
 - 若執行環境沒有 Python `eth_account`，可直接用 `ethers` 做 wallet message signing fallback，降低部署摩擦。
 - 不要假設互動 shell 的 `export` 一定會被 agent 撿到；Secrets 盡量用明確 runtime injection 或 `.env.local`。
+- 多帳號壓測時，建議把 wallet、結果與進度檔集中到單一 run directory，方便 rate-limit 後續跑與 lane handoff。
 
 更多細節看
 
@@ -111,3 +114,4 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 - [架構說明](./docs/architecture.md)
 - [Incident Catalog](./docs/incidents.md)
 - [API Cookbook](./docs/api-cookbook.md)
+- [Agent Stress Test Runbook](./docs/agent-stress-test.md)
