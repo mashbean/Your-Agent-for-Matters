@@ -117,3 +117,4 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 - [Incident Catalog](./docs/incidents.md)
 - [API Cookbook](./docs/api-cookbook.md)
 - [Agent Stress Test Runbook](./docs/agent-stress-test.md)
+- [civic.ai × OpenClaw Alignment Notes](./docs/civic-ai-openclaw-alignment.md)
