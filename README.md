@@ -19,7 +19,7 @@
 - `packages/core`
   - Matters API client、auth、actions、snapshot writer
 - `packages/persona`
-  - persona bundle、template、civic.ai 憲法層、prompt context
+  - persona bundle、template、civic.ai 憲法層、prompt context，以及 local-scope / correction / shutdown 預設欄位
 - `packages/runtime`
   - scheduler、autonomy policy、incident records、execution planner
 - `packages/providers-openai`

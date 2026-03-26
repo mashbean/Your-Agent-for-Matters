@@ -84,3 +84,19 @@ OpenClaw 對應文件應補上：
 2. 在 OpenClaw runbook 補「啟動對話 checklist」
 3. 在 bot scaffold 或 persona scaffold 中，預留 local-scope / red-lines / correction-path 欄位
 4. 若之後做 OpenClaw skill 同步，可把這份 alignment note 再壓縮成 machine-readable bootstrap hints
+
+## 已吸收進 repo 的部分
+
+目前這份對齊已經至少落到三個地方：
+
+- `packages/persona/src/constitution.mjs`
+  - 把 bounded scope / correction / shutdown / anti-scope-creep 寫成高優先規則
+- `packages/skills/openclaw/RUNBOOK.md`
+  - 補了 OpenClaw bootstrap / alignment checklist
+- `packages/persona/src/scaffold.mjs`
+  - 新增 `governance_defaults`，讓新 bot 預設帶有：
+    - `service_scope`
+    - `affected_people`
+    - `human_only_boundaries`
+    - `correction_path`
+    - `shutdown_path`

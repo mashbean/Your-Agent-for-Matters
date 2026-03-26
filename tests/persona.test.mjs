@@ -18,6 +18,9 @@ test("scaffold bot creates persona bundle", async () => {
   });
   const bundle = JSON.parse(await readFile(path.join(outputDir, "persona-bundle.json"), "utf8"));
   assert.equal(bundle.persona_name, "Starter");
+  assert.equal(bundle.governance_defaults.service_scope.includes("Starter"), true);
+  assert.ok(Array.isArray(bundle.governance_defaults.affected_people));
+  assert.ok(Array.isArray(bundle.governance_defaults.human_only_boundaries));
 });
 
 test("runtime prompt context puts constitution first", async () => {
