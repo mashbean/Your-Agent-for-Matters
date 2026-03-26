@@ -100,3 +100,5 @@ OpenClaw 對應文件應補上：
     - `human_only_boundaries`
     - `correction_path`
     - `shutdown_path`
+- `bot-spec.json` + `buildRuntimePromptContext(...)`
+  - governance defaults 會進 bot spec，並在 runtime prompt context 中作為獨立 `governance` section 注入 agent 啟動內容

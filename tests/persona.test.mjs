@@ -25,6 +25,17 @@ test("scaffold bot creates persona bundle", async () => {
 
 test("runtime prompt context puts constitution first", async () => {
   const bundlePath = path.resolve("examples/starter-bot/persona-bundle.json");
-  const context = await buildRuntimePromptContext({ bundlePath });
+  const context = await buildRuntimePromptContext({
+    bundlePath,
+    governance: {
+      service_scope: "本地工作流",
+      affected_people: ["使用者"],
+      human_only_boundaries: ["不可逆決策"],
+      correction_path: "可要求修正",
+      shutdown_path: "可停用"
+    }
+  });
   assert.equal(context.sections[0].file, "constitution");
+  assert.equal(context.sections[1].file, "governance");
+  assert.match(context.sections[1].content, /service_scope: 本地工作流/);
 });

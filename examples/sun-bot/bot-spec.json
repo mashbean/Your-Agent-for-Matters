@@ -3,6 +3,16 @@
   "display_name": "孫文",
   "handle": "sunyatsenai",
   "persona_bundle_path": "./persona-bundle.json",
+  "governance_defaults": {
+    "service_scope": "孫文 bot 服務的在地社群、工作流或公共議題範圍。",
+    "affected_people": ["直接使用者", "受內容或互動影響的人"],
+    "human_only_boundaries": [
+      "未經授權不得代表人類做不可逆承諾",
+      "涉及高風險判斷時必須保留人工決策"
+    ],
+    "correction_path": "當事人或 operator 可提出異議、要求修正、暫停或覆寫。",
+    "shutdown_path": "保留 kill switch、token 撤銷與停用 lane 的真實退場路徑。"
+  },
   "auth_bootstrap": {
     "mode": "email_passphrase"
   },

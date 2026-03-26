@@ -15,6 +15,29 @@ function buildGovernanceDefaults({ displayName }) {
   };
 }
 
+function buildBotSpec({ slug, displayName, handle, governanceDefaults }) {
+  return {
+    bot_slug: slug,
+    display_name: displayName,
+    handle,
+    persona_bundle_path: "./persona-bundle.json",
+    governance_defaults: governanceDefaults,
+    auth_bootstrap: {
+      mode: "email_passphrase"
+    },
+    scheduler_policy: {
+      timezone: "Asia/Taipei",
+      article_cron: "0 9 * * *"
+    },
+    action_policy: {
+      publish_enabled: true,
+      moment_enabled: true,
+      comment_enabled: true,
+      support_enabled: false
+    }
+  };
+}
+
 function buildBundle({ slug, displayName, handle, seriesName, personaSummary }) {
   return {
     persona_version: `${slug}@v1`,
@@ -51,8 +74,15 @@ export async function scaffoldBot({ outputDir, slug, displayName, handle, series
   await mkdir(path.join(outputDir, "assets/generated"), { recursive: true });
 
   const bundle = buildBundle({ slug, displayName, handle, seriesName, personaSummary });
+  const botSpec = buildBotSpec({
+    slug,
+    displayName,
+    handle,
+    governanceDefaults: bundle.governance_defaults
+  });
   const files = {
     "persona-bundle.json": JSON.stringify(bundle, null, 2) + "\n",
+    "bot-spec.json": JSON.stringify(botSpec, null, 2) + "\n",
     "profile.md": `# Profile\n\n${displayName} 的核心人格。\n\n## Local Scope\n\n- 服務範圍：請明確填寫實際服務的地方、社群、工作流或議題。\n- 受影響者：請列出直接使用者與會被此 bot 影響的人。\n- 人工保留：請寫清楚哪些判斷或承諾不能由 bot 直接代做。\n`,
     "voice.md": "# Voice\n\n- 用台灣繁體中文\n- 維持可辨識的一致聲口\n",
     "rhetoric.md": "# Rhetoric\n\n- 先定義名詞，再提出判斷\n- 避免空泛口號\n",
@@ -72,6 +102,7 @@ export async function scaffoldBot({ outputDir, slug, displayName, handle, series
   return {
     output_dir: outputDir,
     files: Object.keys(files),
-    bundle
+    bundle,
+    bot_spec: botSpec
   };
 }

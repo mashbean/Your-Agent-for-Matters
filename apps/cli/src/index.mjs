@@ -233,7 +233,8 @@ async function runAutonomous(flags) {
     : createRuntimeState();
   const schedule = createSchedulePolicy(botSpec.scheduler_policy || {});
   const promptContext = await buildRuntimePromptContext({
-    bundlePath: path.resolve(path.dirname(specPath), botSpec.persona_bundle_path)
+    bundlePath: path.resolve(path.dirname(specPath), botSpec.persona_bundle_path),
+    governance: botSpec.governance_defaults || null
   });
   const plan = computeNextExecutionPlan({
     botSpec,
@@ -275,7 +276,10 @@ async function runWriteSeries(flags) {
   const specPath = path.resolve(flags.spec);
   const botSpec = await loadJson(specPath);
   const bundlePath = path.resolve(path.dirname(specPath), botSpec.persona_bundle_path);
-  const promptContext = await buildRuntimePromptContext({ bundlePath });
+  const promptContext = await buildRuntimePromptContext({
+    bundlePath,
+    governance: botSpec.governance_defaults || null
+  });
   const provider = createOpenAIProvider({
     apiKey: process.env.OPENAI_API_KEY,
     textModel: process.env.OPENAI_TEXT_MODEL

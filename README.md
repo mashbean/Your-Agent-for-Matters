@@ -20,6 +20,8 @@
   - Matters API client、auth、actions、snapshot writer
 - `packages/persona`
   - persona bundle、template、civic.ai 憲法層、prompt context，以及 local-scope / correction / shutdown 預設欄位
+- `bot-spec.json`
+  - 可承載 governance defaults，並在 runtime prompt context 中注入給 agent
 - `packages/runtime`
   - scheduler、autonomy policy、incident records、execution planner
 - `packages/providers-openai`
