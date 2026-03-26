@@ -29,6 +29,8 @@
 - 執行
   - `runtime run-autonomous`
   - `runtime write-snapshot`
+  - `stress create-run`
+  - `stress resume-comments`
 
 ## 實驗 lane
 

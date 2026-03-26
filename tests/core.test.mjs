@@ -5,7 +5,11 @@ import {
   buildSourceLinkCommentHtml,
   createCommittedSnapshot,
   normalizeEthereumSignature,
-  redactAuthResult
+  redactAuthResult,
+  buildConversationPrompt,
+  buildConversationSchema,
+  resolveRetryWaitMs,
+  resolveStressRunPaths
 } from "../packages/core/src/index.mjs";
 
 test("source link comment html renders anchor", () => {
@@ -56,4 +60,36 @@ test("committed snapshot includes raw report section", () => {
   });
   assert.match(markdown, /## Raw Report/);
   assert.match(markdown, /"status": "ok"/);
+});
+
+test("stress run paths resolve expected files", () => {
+  const paths = resolveStressRunPaths("./tmp/example-run");
+  assert.match(paths.root, /tmp\/example-run$/);
+  assert.match(paths.resultPath, /stress-results\.json$/);
+  assert.match(paths.progressPath, /stress-progress\.json$/);
+});
+
+test("retry wait prefers action limit for rate limit errors", () => {
+  assert.equal(resolveRetryWaitMs("ACTION_LIMIT_EXCEEDED slow down", 120000, 30000), 120000);
+  assert.equal(resolveRetryWaitMs("other error", 120000, 30000), 30000);
+});
+
+test("conversation schema reflects account keys and count", () => {
+  const schema = buildConversationSchema(["a", "b", "c"], 5);
+  assert.equal(schema.properties.comments.minItems, 5);
+  assert.deepEqual(schema.properties.comments.items.properties.speaker.enum, ["a", "b", "c"]);
+});
+
+test("conversation prompt includes topic and first speakers", () => {
+  const prompt = buildConversationPrompt({
+    conversation: { topic: "公共討論", comment_count: 6, moment_max_chars: 120 },
+    accounts: [
+      { key: "santaizi", display_name: "三太子" },
+      { key: "wukong", display_name: "孫悟空" },
+      { key: "baoyu", display_name: "賈寶玉" }
+    ]
+  });
+  assert.match(prompt, /主題：公共討論/);
+  assert.match(prompt, /第一則與第二則留言必須分別由 santaizi 與 wukong 發出/);
+  assert.match(prompt, /先寫一則由 baoyu 發出的短動態/);
 });

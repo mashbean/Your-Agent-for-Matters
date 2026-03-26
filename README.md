@@ -76,10 +76,12 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 - `engage event-patrol`
 - `runtime run-autonomous`
 - `runtime write-snapshot`
+- `stress create-run`
+- `stress resume-comments`
 - `support bind-wallet`
 - `support send-official`
 - `examples/agent-stress-test/*`
-  - 多帳號壓力測試範例：一次建帳、首輪互動、rate-limit 後續跑
+  - 多帳號壓力測試範例：CLI-first 的薄包裝與範例設定檔
 
 ## 目前實作狀態
 

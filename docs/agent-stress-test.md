@@ -8,12 +8,14 @@
 
 ## 內容概覽
 
+- `apps/cli/src/index.mjs`
+  - 正式 CLI 入口，支援 `stress create-run` 與 `stress resume-comments`
+- `packages/core/src/stress-test.mjs`
+  - 共用壓測邏輯：建帳、生成對話、run directory、進度續跑
 - `examples/agent-stress-test/accounts.example.json`
   - 多帳號設定檔
-- `examples/agent-stress-test/run-stress-test.mjs`
-  - 一次建立多帳號、補 profile、產 moment 與首輪留言
-- `examples/agent-stress-test/resume-comments-with-backoff.mjs`
-  - 遇到 Matters comment rate limit 後，用 backoff 方式續跑
+- `examples/agent-stress-test/*.mjs`
+  - CLI-first 的薄包裝示例
 
 ## 適用情境
 
@@ -33,12 +35,12 @@ export OPENAI_IMAGE_MODEL=gpt-image-1
 ## 1. 一次性建立多帳號並發出首輪互動
 
 ```bash
-node examples/agent-stress-test/run-stress-test.mjs \
+node apps/cli/src/index.mjs stress create-run \
   --config ./examples/agent-stress-test/accounts.example.json \
   --out ./tmp/agent-stress-test-run
 ```
 
-這支腳本會完成：
+這個 CLI 子命令會完成：
 
 - 依設定檔建立多組 wallet-first Matters 帳號
 - 為每個帳號生成 avatar / banner
@@ -66,17 +68,17 @@ repo 本身不直接依賴 OpenClaw，但推薦的 operator pattern 是：
 
 ## 3. 遇到節流時續跑多輪留言
 
-Matters 在短時間密集留言時，可能會回 `ACTION_LIMIT_EXCEEDED`。這時不要手動重貼內容，直接用續跑腳本：
+Matters 在短時間密集留言時，可能會回 `ACTION_LIMIT_EXCEEDED`。這時不要手動重貼內容，直接用續跑子命令：
 
 ```bash
-node examples/agent-stress-test/resume-comments-with-backoff.mjs \
+node apps/cli/src/index.mjs stress resume-comments \
   --out ./tmp/agent-stress-test-run \
   --action-limit-ms 120000 \
   --default-retry-ms 30000 \
   --comment-delay-ms 20000
 ```
 
-這支腳本會：
+這個子命令會：
 
 - 讀取 `stress-results.json`
 - 重新用 wallet secret 登入每個帳號

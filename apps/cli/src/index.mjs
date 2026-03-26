@@ -20,7 +20,9 @@ import {
   saveJson,
   toBoolean,
   toSafeString,
-  walletSignupWithWallet
+  walletSignupWithWallet,
+  runStressCreate,
+  runStressResume
 } from "../../../packages/core/src/index.mjs";
 import {
   buildRuntimePromptContext,
@@ -54,6 +56,8 @@ Commands
   engage event-patrol
   runtime run-autonomous
   runtime write-snapshot
+  stress create-run
+  stress resume-comments
   support bind-wallet
   support send-official
 `);
@@ -400,6 +404,33 @@ async function runSendOfficial(flags) {
   console.log(JSON.stringify(result, null, 2));
 }
 
+async function runStressCreateCommand(flags) {
+  const provider = createOpenAIProvider({
+    apiKey: process.env.OPENAI_API_KEY,
+    textModel: process.env.OPENAI_TEXT_MODEL || "gpt-5.2",
+    imageModel: process.env.OPENAI_IMAGE_MODEL || "gpt-image-1"
+  });
+  const result = await runStressCreate({
+    endpoint: resolveEndpoint(flags),
+    provider,
+    configPath: flags.config || "./examples/agent-stress-test/accounts.example.json",
+    outDir: flags.out || "./tmp/agent-stress-test-run",
+    commentDelayMs: Number(flags["comment-delay-ms"] || 0)
+  });
+  console.log(JSON.stringify(result, null, 2));
+}
+
+async function runStressResumeCommand(flags) {
+  const result = await runStressResume({
+    endpoint: resolveEndpoint(flags),
+    outDir: flags.out || "./tmp/agent-stress-test-run",
+    actionLimitMs: Number(flags["action-limit-ms"] || 120000),
+    defaultRetryMs: Number(flags["default-retry-ms"] || 30000),
+    commentDelayMs: Number(flags["comment-delay-ms"] || 20000)
+  });
+  console.log(JSON.stringify(result, null, 2));
+}
+
 async function main() {
   const { group, command, flags } = parseArgs(process.argv.slice(2));
   if (!group || !command) {
@@ -420,6 +451,8 @@ async function main() {
   if (group === "engage" && command === "event-patrol") return runEventPatrol(flags);
   if (group === "runtime" && command === "run-autonomous") return runAutonomous(flags);
   if (group === "runtime" && command === "write-snapshot") return runSnapshot(flags);
+  if (group === "stress" && command === "create-run") return runStressCreateCommand(flags);
+  if (group === "stress" && command === "resume-comments") return runStressResumeCommand(flags);
   if (group === "support" && command === "bind-wallet") return runBindWallet(flags);
   if (group === "support" && command === "send-official") return runSendOfficial(flags);
 

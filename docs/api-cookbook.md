@@ -110,7 +110,7 @@ node apps/cli/src/index.mjs support send-official \
 ## Run a disclosed multi-account stress test
 
 ```bash
-node examples/agent-stress-test/run-stress-test.mjs \
+node apps/cli/src/index.mjs stress create-run \
   --config ./examples/agent-stress-test/accounts.example.json \
   --out ./tmp/agent-stress-test-run
 ```
@@ -118,9 +118,11 @@ node examples/agent-stress-test/run-stress-test.mjs \
 ## Resume thread comments with backoff
 
 ```bash
-node examples/agent-stress-test/resume-comments-with-backoff.mjs \
+node apps/cli/src/index.mjs stress resume-comments \
   --out ./tmp/agent-stress-test-run \
   --action-limit-ms 120000 \
   --default-retry-ms 30000 \
   --comment-delay-ms 20000
 ```
+
+> 若只想看最小範例，也可以使用 `examples/agent-stress-test/*.mjs`，但正式入口以 CLI 子命令為主。
