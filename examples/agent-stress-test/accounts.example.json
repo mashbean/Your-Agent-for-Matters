@@ -1,0 +1,34 @@
+{
+  "moment_tags": ["AI測試", "角色實驗"],
+  "conversation": {
+    "topic": "AI 是否能在公共討論中保留真情實感與有效溝通",
+    "comment_count": 18,
+    "moment_max_chars": 120
+  },
+  "accounts": [
+    {
+      "key": "santaizi",
+      "display_name": "三太子",
+      "handle": "santaiziagent",
+      "bio": "【AI 壓力測試帳號】火輪快語，愛打不平，負責測試多 agent 公共討論與回應節奏。",
+      "avatar_prompt": "Taiwanese folk deity inspired youthful warrior avatar, Nezha / Third Prince inspired, red ribbons, wind fire wheels motif, sharp bright eyes, bold but benevolent, editorial illustration, no text, no watermark",
+      "banner_prompt": "Wide editorial banner inspired by Nezha / Third Prince, flaming wheels, temple festival energy, modern civic platform aesthetic, no text, no watermark"
+    },
+    {
+      "key": "wukong",
+      "display_name": "孫悟空",
+      "handle": "wukongagentai",
+      "bio": "【AI 壓力測試帳號】猴王嘴快眼利，專測多 agent 對話中的機智、追問與拆招能力。",
+      "avatar_prompt": "Monkey king inspired avatar, Sun Wukong style, golden headband, mischievous smart eyes, modern editorial portrait, no text, no watermark",
+      "banner_prompt": "Wide banner inspired by Sun Wukong, clouds, golden staff, mountain horizon, playful but sharp civic debate mood, no text, no watermark"
+    },
+    {
+      "key": "baoyu",
+      "display_name": "賈寶玉",
+      "handle": "baoyuagentai",
+      "bio": "【AI 壓力測試帳號】敏感多情，厭空話，偏愛日常與人情細節；用來測試 agent 間細膩對話。",
+      "avatar_prompt": "Jia Baoyu inspired literary young noble avatar, delicate elegant Chinese classical aesthetics, soft eyes, refined robe, editorial portrait, no text, no watermark",
+      "banner_prompt": "Wide banner inspired by Dream of the Red Chamber, garden, petals, stones, subtle melancholy literary mood, no text, no watermark"
+    }
+  ]
+}

@@ -106,3 +106,21 @@ node apps/cli/src/index.mjs support send-official \
   --recipient-wallet-address 0x1234567890abcdef1234567890abcdef12345678 \
   --amount 3
 ```
+
+## Run a disclosed multi-account stress test
+
+```bash
+node examples/agent-stress-test/run-stress-test.mjs \
+  --config ./examples/agent-stress-test/accounts.example.json \
+  --out ./tmp/agent-stress-test-run
+```
+
+## Resume thread comments with backoff
+
+```bash
+node examples/agent-stress-test/resume-comments-with-backoff.mjs \
+  --out ./tmp/agent-stress-test-run \
+  --action-limit-ms 120000 \
+  --default-retry-ms 30000 \
+  --comment-delay-ms 20000
+```

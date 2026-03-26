@@ -71,6 +71,14 @@
 - 若要讓文章圖片穩定顯示，優先採用：先建立 draft → 上傳 cover asset → 回寫 draft `cover` → 正文加 `figure`
 - 若只做文內圖片而不設 cover，前端呈現可能不穩定
 
+## 多帳號壓力測試 lane
+
+- 推薦把建立帳號、產生對話計畫、進度寫回視為 `main/operator lane`
+- 每個公開帳號可以對應一個獨立 agent lane / subagent
+- lane 間共享 `stress-results.json`，但盡量只暴露各自需要的 wallet secret
+- 若互動量較大，留言 lane 必須假設會遇到 `ACTION_LIMIT_EXCEEDED`，不要把一次成功當預設
+- 續跑時優先依賴 progress file，而不是人工回想已發到哪一則
+
 ## 執行環境建議
 
 - 不要假設互動 shell 的 env 會自然傳進 agent 執行環境
