@@ -6,3 +6,4 @@ export * from "./actions.mjs";
 export * from "./reports.mjs";
 export * from "./support.mjs";
 export * from "./wallet-auth.mjs";
+export * from "./stress-test.mjs";

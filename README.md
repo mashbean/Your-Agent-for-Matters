@@ -19,7 +19,9 @@
 - `packages/core`
   - Matters API client、auth、actions、snapshot writer
 - `packages/persona`
-  - persona bundle、template、civic.ai 憲法層、prompt context
+  - persona bundle、template、civic.ai 憲法層、prompt context，以及 local-scope / correction / shutdown 預設欄位
+- `bot-spec.json`
+  - 可承載 governance defaults，並在 runtime prompt context 中注入給 agent
 - `packages/runtime`
   - scheduler、autonomy policy、incident records、execution planner
 - `packages/providers-openai`
@@ -76,10 +78,12 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 - `engage event-patrol`
 - `runtime run-autonomous`
 - `runtime write-snapshot`
+- `stress create-run`
+- `stress resume-comments`
 - `support bind-wallet`
 - `support send-official`
 - `examples/agent-stress-test/*`
-  - 多帳號壓力測試範例：一次建帳、首輪互動、rate-limit 後續跑
+  - 多帳號壓力測試範例：CLI-first 的薄包裝與範例設定檔
 
 ## 目前實作狀態
 
@@ -115,3 +119,4 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 - [Incident Catalog](./docs/incidents.md)
 - [API Cookbook](./docs/api-cookbook.md)
 - [Agent Stress Test Runbook](./docs/agent-stress-test.md)
+- [civic.ai × OpenClaw Alignment Notes](./docs/civic-ai-openclaw-alignment.md)
