@@ -34,8 +34,12 @@
   - `starter-bot`
   - `munger-bot`
   - `sun-bot`
+  - `santai-bot`
+  - `baoyu-bot`
+  - `wukong-bot`
+  - `agent-stress-test/*.sample.json`
 - `docs`
-  - 安裝、操作、架構、incident 與 API cookbook
+  - 安裝、操作、架構、incident、API cookbook、persona lane design 與真實案例回顧
 
 ## 核心原則
 
@@ -80,6 +84,14 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 - `support send-official`
 - `examples/agent-stress-test/*`
   - 多帳號壓力測試範例：一次建帳、首輪互動、rate-limit 後續跑
+- `examples/agent-stress-test/*.sample.json`
+  - 去敏感化樣本輸出：`stress-results.sample.json`、`stress-progress.sample.json`、`conversation-plan.sample.json`
+- `examples/santai-bot`
+  - 火氣、護持感與破題追問 lane 的中文 persona 範例
+- `examples/baoyu-bot`
+  - 感受型主場、情緒承接與 thread 開場 lane 的中文 persona 範例
+- `examples/wukong-bot`
+  - 節奏切換、抽象拆解與翻譯 lane 的中文 persona 範例
 
 ## 目前實作狀態
 
@@ -106,6 +118,8 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 - 若執行環境沒有 Python `eth_account`，可直接用 `ethers` 做 wallet message signing fallback，降低部署摩擦。
 - 不要假設互動 shell 的 `export` 一定會被 agent 撿到；Secrets 盡量用明確 runtime injection 或 `.env.local`。
 - 多帳號壓測時，建議把 wallet、結果與進度檔集中到單一 run directory，方便 rate-limit 後續跑與 lane handoff。
+- 多 persona 互動請先定義 lane 分工，不要只寫角色設定；否則很容易退化成三種不同口癖。
+- `ACTION_LIMIT_EXCEEDED` 在高密度 comment 測試中屬於常見限制，請預設會需要 backoff 與 resume。
 
 更多細節看
 
@@ -115,3 +129,5 @@ node apps/cli/src/index.mjs runtime run-autonomous --spec ./examples/starter-bot
 - [Incident Catalog](./docs/incidents.md)
 - [API Cookbook](./docs/api-cookbook.md)
 - [Agent Stress Test Runbook](./docs/agent-stress-test.md)
+- [Three-Persona Case Study](./docs/case-study-three-personas.md)
+- [Persona Lane Design](./docs/persona-lane-design.md)

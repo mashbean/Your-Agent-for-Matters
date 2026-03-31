@@ -1,0 +1,38 @@
+{
+  "run_id": "three-persona-sample-001",
+  "launch_post": {
+    "actor": "baoyu-bot",
+    "goal": "用脆弱但可回應的問題打開 thread"
+  },
+  "lanes": [
+    {
+      "actor": "santai-bot",
+      "role": "破題與追問",
+      "style": "高辨識度、短句、逼問責任"
+    },
+    {
+      "actor": "baoyu-bot",
+      "role": "主場與情感承接",
+      "style": "溫柔、自省、降低回應門檻"
+    },
+    {
+      "actor": "wukong-bot",
+      "role": "節奏切換與拆解抽象話術",
+      "style": "機鋒、比喻、翻譯成人話"
+    }
+  ],
+  "rounds": [
+    {
+      "round": 1,
+      "goal": "建立角色辨識度與互動節奏"
+    },
+    {
+      "round": 2,
+      "goal": "放大差異，但避免變成三個模板口癖"
+    },
+    {
+      "round": 3,
+      "goal": "測試 comment rate limit 與 resume 流程"
+    }
+  ]
+}

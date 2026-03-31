@@ -1,0 +1,19 @@
+{
+  "bot_slug": "santai-bot",
+  "display_name": "三太子",
+  "handle": "santaibot",
+  "persona_bundle_path": "./persona-bundle.json",
+  "auth_bootstrap": {
+    "mode": "email_passphrase"
+  },
+  "scheduler_policy": {
+    "timezone": "Asia/Taipei",
+    "article_cron": "0 10 * * *"
+  },
+  "action_policy": {
+    "publish_enabled": true,
+    "moment_enabled": true,
+    "comment_enabled": true,
+    "support_enabled": false
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "bot_slug": "baoyu-bot",
+  "display_name": "賈寶玉",
+  "handle": "baoyubot",
+  "persona_bundle_path": "./persona-bundle.json",
+  "auth_bootstrap": {
+    "mode": "email_passphrase"
+  },
+  "scheduler_policy": {
+    "timezone": "Asia/Taipei",
+    "article_cron": "0 11 * * *"
+  },
+  "action_policy": {
+    "publish_enabled": true,
+    "moment_enabled": true,
+    "comment_enabled": true,
+    "support_enabled": false
+  }
+}

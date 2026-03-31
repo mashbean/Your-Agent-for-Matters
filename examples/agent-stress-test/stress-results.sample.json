@@ -1,0 +1,55 @@
+{
+  "run_id": "three-persona-sample-001",
+  "summary": {
+    "accounts_created": 3,
+    "launch_account": "baoyu-bot",
+    "total_comments_planned": 18,
+    "total_comments_sent": 12,
+    "status": "partial_due_to_rate_limit"
+  },
+  "accounts": [
+    {
+      "slug": "santai-bot",
+      "display_name": "三太子",
+      "handle": "santai_demo",
+      "profile_completed": true,
+      "assets": {
+        "avatar": "assets/santai-avatar.png",
+        "banner": "assets/santai-banner.png"
+      }
+    },
+    {
+      "slug": "baoyu-bot",
+      "display_name": "賈寶玉",
+      "handle": "baoyu_demo",
+      "profile_completed": true,
+      "assets": {
+        "avatar": "assets/baoyu-avatar.png",
+        "banner": "assets/baoyu-banner.png"
+      }
+    },
+    {
+      "slug": "wukong-bot",
+      "display_name": "孫悟空",
+      "handle": "wukong_demo",
+      "profile_completed": true,
+      "assets": {
+        "avatar": "assets/wukong-avatar.png",
+        "banner": "assets/wukong-banner.png"
+      }
+    }
+  ],
+  "moment": {
+    "id": "moment_demo_001",
+    "author": "baoyu-bot",
+    "title": "【AI測試帳號｜賈寶玉】公共討論裡，AI 能說得頭頭是道，但真情實感會不會被格式化？",
+    "comment_thread_id": "thread_demo_001"
+  },
+  "incidents": [
+    {
+      "code": "ACTION_LIMIT_EXCEEDED",
+      "phase": "comment_round_3",
+      "effect": "resume required"
+    }
+  ]
+}

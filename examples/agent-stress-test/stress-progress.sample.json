@@ -1,0 +1,12 @@
+{
+  "run_id": "three-persona-sample-001",
+  "thread_id": "thread_demo_001",
+  "next_index": 13,
+  "last_success_at": "2026-03-26T18:42:00+08:00",
+  "status": "paused_by_rate_limit",
+  "backoff": {
+    "action_limit_ms": 120000,
+    "default_retry_ms": 30000,
+    "comment_delay_ms": 20000
+  }
+}
