@@ -1,0 +1,78 @@
+name: munger-live
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+    - cron: '0 */8 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  run-munger-live:
+    runs-on: ubuntu-latest
+    env:
+      BOT_SLUG: munger
+      BOT_SPEC_PATH: examples/munger-bot/bot-spec.json
+      PROGRESS_STATE_PATH: state/munger-live-progress.json
+      PUBLISH_BACKOFF_MINUTES: '90'
+      RESUME_FROM_PROGRESS: 'true'
+      MATTERS_GRAPHQL_ENDPOINT: ${{ secrets.MATTERS_GRAPHQL_ENDPOINT }}
+      MATTERS_GRAPHQL_TOKEN: ${{ secrets.MATTERS_GRAPHQL_TOKEN }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Ensure required secrets exist
+        run: |
+          test -n "$MATTERS_GRAPHQL_TOKEN" || { echo "MATTERS_GRAPHQL_TOKEN is missing"; exit 1; }
+          test -n "$OPENAI_API_KEY" || { echo "OPENAI_API_KEY is missing"; exit 1; }
+
+      - name: Ensure state directory exists
+        run: mkdir -p "$(dirname \"$PROGRESS_STATE_PATH\")" .artifacts
+
+      - name: Preview next execution plan
+        run: |
+          node apps/cli/src/index.mjs runtime run-autonomous \
+            --spec "$BOT_SPEC_PATH" \
+            --state "$PROGRESS_STATE_PATH" | tee .artifacts/${BOT_SLUG}-plan.json
+
+      - name: Run live autonomous lane
+        run: |
+          set -o pipefail
+          node apps/cli/src/index.mjs runtime execute-live \
+            --spec "$BOT_SPEC_PATH" \
+            --state "$PROGRESS_STATE_PATH" | tee .artifacts/${BOT_SLUG}-run.json
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: munger-live-plan
+          path: .artifacts/munger-plan.json
+
+      - name: Upload live run artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: munger-live-run
+          if-no-files-found: warn
+          path: .artifacts/munger-run.json
+
+      - name: Upload progress state for resume diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: munger-live-state
+          if-no-files-found: warn
+          path: state/munger-live-progress.json

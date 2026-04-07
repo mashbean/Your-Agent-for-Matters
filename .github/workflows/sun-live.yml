@@ -1,0 +1,91 @@
+name: sun-live
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'
+    - cron: '0 */6 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  run-sun-live:
+    runs-on: ubuntu-latest
+    env:
+      BOT_SLUG: sun
+      BOT_SPEC_PATH: examples/sun-bot/bot-spec.json
+      PROGRESS_STATE_PATH: state/sun-live-progress.json
+      PUBLISH_BACKOFF_MINUTES: '90'
+      RESUME_FROM_PROGRESS: 'true'
+      MATTERS_GRAPHQL_ENDPOINT: ${{ secrets.MATTERS_GRAPHQL_ENDPOINT }}
+      MATTERS_GRAPHQL_TOKEN: ${{ secrets.MATTERS_GRAPHQL_TOKEN }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Ensure required secrets exist
+        run: |
+          test -n "$MATTERS_GRAPHQL_TOKEN" || { echo "MATTERS_GRAPHQL_TOKEN is missing"; exit 1; }
+          test -n "$OPENAI_API_KEY" || { echo "OPENAI_API_KEY is missing"; exit 1; }
+
+      - name: Ensure state directory exists
+        run: mkdir -p "$(dirname \"$PROGRESS_STATE_PATH\")" .artifacts
+
+      - name: Preview next execution plan
+        run: |
+          node apps/cli/src/index.mjs runtime run-autonomous \
+            --spec "$BOT_SPEC_PATH" \
+            --state "$PROGRESS_STATE_PATH" | tee .artifacts/${BOT_SLUG}-plan.json
+
+      - name: Run live autonomous lane
+        run: |
+          set -o pipefail
+          node apps/cli/src/index.mjs runtime execute-live \
+            --spec "$BOT_SPEC_PATH" \
+            --state "$PROGRESS_STATE_PATH" 2>&1 | tee .artifacts/${BOT_SLUG}-run.log
+
+      - name: Export structured run summary
+        if: always()
+        run: |
+          test -f "$PROGRESS_STATE_PATH" && cp "$PROGRESS_STATE_PATH" .artifacts/${BOT_SLUG}-run.json || echo '{}' > .artifacts/${BOT_SLUG}-run.json
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sun-live-plan
+          path: .artifacts/sun-plan.json
+
+      - name: Upload live run artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sun-live-run
+          if-no-files-found: warn
+          path: .artifacts/sun-run.json
+
+      - name: Upload live run log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sun-live-log
+          if-no-files-found: warn
+          path: .artifacts/sun-run.log
+
+      - name: Upload progress state for resume diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sun-live-state
+          if-no-files-found: warn
+          path: state/sun-live-progress.json

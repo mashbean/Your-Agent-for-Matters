@@ -1,0 +1,88 @@
+name: daily-lanes
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 1 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  preview-daily-lanes:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - bot_slug: munger
+            bot_spec_path: examples/munger-bot/bot-spec.json
+            progress_state_path: state/munger-live-progress.json
+          - bot_slug: sun
+            bot_spec_path: examples/sun-bot/bot-spec.json
+            progress_state_path: state/sun-live-progress.json
+    env:
+      BOT_SLUG: ${{ matrix.bot_slug }}
+      BOT_SPEC_PATH: ${{ matrix.bot_spec_path }}
+      PROGRESS_STATE_PATH: ${{ matrix.progress_state_path }}
+      MATTERS_GRAPHQL_ENDPOINT: ${{ secrets.MATTERS_GRAPHQL_ENDPOINT }}
+      MATTERS_GRAPHQL_TOKEN: ${{ secrets.MATTERS_GRAPHQL_TOKEN }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify shared secrets wiring
+        run: |
+          test -n "$MATTERS_GRAPHQL_TOKEN" || { echo "MATTERS_GRAPHQL_TOKEN is missing"; exit 1; }
+          test -n "$OPENAI_API_KEY" || { echo "OPENAI_API_KEY is missing"; exit 1; }
+
+      - name: Prepare preview workspace
+        run: |
+          mkdir -p .artifacts state
+          test -f "$PROGRESS_STATE_PATH" || echo '{}' > "$PROGRESS_STATE_PATH"
+          echo '[]' > .artifacts/${BOT_SLUG}-event-candidates.json
+          echo '{"mode":"preview","items":[]}' > .artifacts/${BOT_SLUG}-reply-queue.json
+          echo '{"mode":"preview","items":[]}' > .artifacts/${BOT_SLUG}-support-queue.json
+
+      - name: Preview watchlist lane
+        run: |
+          node apps/cli/src/index.mjs runtime run-autonomous \
+            --spec "$BOT_SPEC_PATH" \
+            --state "$PROGRESS_STATE_PATH" | tee .artifacts/${BOT_SLUG}-watchlist-plan.json
+
+      - name: Preview event patrol lane
+        run: |
+          node apps/cli/src/index.mjs engage event-patrol \
+            --candidates .artifacts/${BOT_SLUG}-event-candidates.json \
+            --limit 3 | tee .artifacts/${BOT_SLUG}-event-patrol.json
+
+      - name: Snapshot support queue placeholder
+        run: |
+          cat .artifacts/${BOT_SLUG}-support-queue.json | tee .artifacts/${BOT_SLUG}-support-queue-preview.json
+
+      - name: Snapshot reply queue placeholder
+        run: |
+          cat .artifacts/${BOT_SLUG}-reply-queue.json | tee .artifacts/${BOT_SLUG}-reply-queue-preview.json
+
+      - name: Upload daily lane artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.bot_slug }}-daily-lanes
+          if-no-files-found: warn
+          path: |
+            .artifacts/${{ matrix.bot_slug }}-watchlist-plan.json
+            .artifacts/${{ matrix.bot_slug }}-event-patrol.json
+            .artifacts/${{ matrix.bot_slug }}-support-queue-preview.json
+            .artifacts/${{ matrix.bot_slug }}-reply-queue-preview.json
+            ${{ matrix.progress_state_path }}
